@@ -9,7 +9,10 @@ class GameManager
   private:
     Fan* fans;
     int numFans;
+    int maxFansActive;
     bool isRunning;
+    unsigned long lastSpawnAttemptTime;
+    unsigned long lastMaxActiveChangeTime; 
 
     void turnOffAllFans();
     void turnOnFan(int fanIndex);

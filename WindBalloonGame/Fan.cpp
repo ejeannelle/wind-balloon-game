@@ -1,16 +1,17 @@
 #include "Fan.h"
 
-Fan::Fan(int pinP) 
+Fan::Fan() 
 {
-  pin = pinP;
+  pin = -1;
   active = false;
   startTime = 0;
   duration = 0;
   lastActivationTime = millis();
 }
 
-void Fan::begin() 
+void Fan::begin(int pinP) 
 {
+  pin = pinP;
   pinMode(pin, OUTPUT);
   turnOff();
 }

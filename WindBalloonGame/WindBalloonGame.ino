@@ -6,14 +6,8 @@
 // Initialisation du bouton de démarrage
 Button startButton(BUTTON_PIN);
 
-// Tableau des 5 ventilateurs initialisés avec leurs broches respectives définies dans Config.h
-Fan fans[NUM_FANS] = {
-  Fan(FAN_PINS[0]),
-  Fan(FAN_PINS[1]),
-  Fan(FAN_PINS[2]),
-  Fan(FAN_PINS[3]),
-  Fan(FAN_PINS[4])
-};
+// Tableau des ventilateurs
+Fan fans[NUM_FANS];
 
 // Initialisation du GameManager 
 GameManager game(fans, NUM_FANS);
@@ -23,17 +17,31 @@ void setup() {
   
   // Initialisation des composants
   startButton.begin();
+  
+  for(int i = 0; i < NUM_FANS; i++){ 
+    fans[i].begin(FAN_PINS[i]);
+  }
+
   game.begin();
   
   // Initialisation du générateur aléatoire (bruit sur une broche analogique non connectée A0)
   randomSeed(analogRead(A0));
   
-  Serial.println("=== Systeme pret ! Appuyez sur le bouton pour lancer le jeu. ===");
+  if(USE_STARTSTOP_BUTTON)
+  {
+    Serial.println("=== Systeme pret ! Appuyez sur le bouton pour lancer le jeu. ===");
+  }
+  else
+  {
+    Serial.println("=== Systeme pret ! ===");
+    //Lancer le jeu
+    game.toggleState(); 
+  }
 }
 
 void loop() 
 {
-  if (startButton.wasPressed()) 
+  if (USE_STARTSTOP_BUTTON && startButton.wasPressed()) 
   {
     game.toggleState();
   }

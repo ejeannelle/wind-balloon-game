@@ -4,16 +4,14 @@
 GameManager::GameManager(Fan* fanArray, int count) {
   fans = fanArray;
   numFans = count;
+  maxFansActive = MAX_FANS_ACTIVE;
   isRunning = false;
+  lastSpawnAttemptTime = millis();
+  lastMaxActiveChangeTime = millis();
 }
 
 void GameManager::begin() 
 {
-  for (int i = 0; i < NUM_FANS; i++) 
-  {
-    fans[i].begin();
-  }
-
   turnOffAllFans();
 }
 
@@ -63,9 +61,19 @@ void GameManager::checkAndManageFans() {
     }
   }
 
-  // S'il y a moins de ventilateurs actifs que le max souhaité 
-  if (activeCount < MAX_FANS_ACTIVE) 
+  // Changer le nombre maximum de ventilateur allumé toutes les x secondes
+  if(currentTime - lastMaxActiveChangeTime >= SPAWN_CHANGE_MAX_ACTIVE)  
   {
+    maxFansActive = random(1, MAX_FANS_ACTIVE + 1); // 1, 2 ou 3
+    lastMaxActiveChangeTime = currentTime;
+  }
+
+  //
+
+  // S'il y a moins de ventilateurs actifs que le max souhaité toutes les x secondes
+  if (activeCount < MAX_FANS_ACTIVE && (currentTime - lastSpawnAttemptTime >= SPAWN_CHECK_INTERVAL)) 
+  {
+    lastSpawnAttemptTime = currentTime;
     if (random(0, 100) < FAN_SPAWN_CHANCE) // Fréquence de tentative d'allumage (ex:30% chance à chaque boucle)
     { 
       //Recherche prioritaire: ventilateur éteint depuis longtemps dépassant le MAX_WAITING_TIME

@@ -12,8 +12,8 @@ class Fan {
     unsigned long lastActivationTime;
 
   public:
-    Fan(int pinP);
-    void begin();
+    Fan();
+    void begin(int pinP);
     void turnOn(unsigned long activeDuration);
     void turnOff();
     bool isActive();
